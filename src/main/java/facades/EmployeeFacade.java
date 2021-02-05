@@ -5,6 +5,7 @@ import entities.Employee;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import utils.EMF_Creator;
 
 public class EmployeeFacade {
 
@@ -45,10 +46,17 @@ public class EmployeeFacade {
 		return EmployeeDTO.getDtos(employees);
 	}
 
-	public List<EmployeeDTO> getEmployeesWithHighestSalary(int salary) {
+	public List<EmployeeDTO> getEmployeesWithSalary(int salary) {
 		EntityManager em = getEntityManager();
 		List<Employee> employees = em.createQuery("SELECT e FROM Employee e WHERE e.salary > :salary")
 			.setParameter("salary", salary)
+			.getResultList();
+		return EmployeeDTO.getDtos(employees);
+	}
+
+	public List<EmployeeDTO> getEmployeesWithHighestSalary() {
+		EntityManager em = getEntityManager();
+		List<Employee> employees = em.createQuery("SELECT e FROM Employee e WHERE e.salary = (SELECT MAX(e.salary) FROM Employee e)")
 			.getResultList();
 		return EmployeeDTO.getDtos(employees);
 	}
@@ -64,5 +72,12 @@ public class EmployeeFacade {
 			em.close();
 		}
 		return new EmployeeDTO(e);
+	}
+
+	public static void main(String[] args) {
+		EmployeeFacade ef = getEmployeeFacade(EMF_Creator.createEntityManagerFactory());
+
+		List<EmployeeDTO> e = ef.getEmployeesWithHighestSalary();
+		e.forEach(System.out::println);
 	}
 }

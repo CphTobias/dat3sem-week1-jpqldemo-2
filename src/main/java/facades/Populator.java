@@ -1,7 +1,6 @@
 package facades;
 
 import dtos.EmployeeDTO;
-import entities.Employee;
 import javax.persistence.EntityManagerFactory;
 import utils.EMF_Creator;
 
